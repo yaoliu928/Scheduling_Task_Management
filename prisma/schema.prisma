@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Schedule {
+  id         String   @id @default(uuid()) // UUID for the schedule
+  accountId  Int      // Account associated with the schedule
+  agentId    Int      // Agent assigned to the schedule
+  startTime  DateTime // Start time of the schedule
+  endTime    DateTime // End time of the schedule
+  tasks      Task[]   // Relation indicating one Schedule can have multiple Tasks
+}
+
+model Task {
+  id         String   @id @default(uuid()) // UUID for the task
+  accountId  Int      // Account associated with the task
+  scheduleId String   // Schedule ID that this task belongs to
+  startTime  DateTime // Start time of the task
+  duration   Int      // Duration of the task in minutes
+  type       TaskType // Task type (break or work)
+
+  // Relation back to Schedule
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+}
+
+// Enum for Task type
+enum TaskType {
+  break
+  work
+}
