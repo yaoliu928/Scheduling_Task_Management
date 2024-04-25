@@ -13,7 +13,7 @@ const addSchedule = async (
   res: { json: (arg0: { id: string; accountId: number; agentId: number; startTime: Date; endTime: Date }) => void },
 ) => {
   const { accountId, agentId, startTime, endTime } = req.body;
-  const result = await prisma.schedule.create({
+  const schedule = await prisma.schedule.create({
     data: {
       accountId,
       agentId,
@@ -21,7 +21,7 @@ const addSchedule = async (
       endTime,
     },
   });
-  res.json(result);
+  res.json(schedule);
 };
 
 const getScheduleById = async (

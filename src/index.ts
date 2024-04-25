@@ -23,19 +23,6 @@ app.get('/', (req: Request, res: Response) => {
   res.send('My Server');
 });
 
-app.post(`/schedules`, async (req, res) => {
-  const { accountId, agentId, startTime, endTime } = req.body;
-  const result = await prisma.schedule.create({
-    data: {
-      accountId,
-      agentId,
-      startTime,
-      endTime,
-    },
-  });
-  res.json(result);
-});
-
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
