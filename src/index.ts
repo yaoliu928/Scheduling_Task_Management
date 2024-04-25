@@ -4,16 +4,20 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cors from 'cors';
+import { v1Router } from './routes';
 
 dotenv.config();
+const port = process.env.PORT || 3000;
+
 const prisma = new PrismaClient();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
 
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+
+app.use('/v1', v1Router);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('My Server');
