@@ -13,28 +13,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+model Schedule {
+  id         String   @id @default(uuid()) // UUID for the schedule
+  accountId  Int      // Account associated with the schedule
+  agentId    Int      // Agent assigned to the schedule
+  startTime  DateTime // Start time of the schedule
+  endTime    DateTime // End time of the schedule
+  tasks      Task[]   // Relation indicating one Schedule can have multiple Tasks
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
+model Task {
+  id         String   @id @default(uuid()) // UUID for the task
+  accountId  Int      // Account associated with the task
+  scheduleId String   // Schedule ID that this task belongs to
+  startTime  DateTime // Start time of the task
+  duration   Int      // Duration of the task in minutes
+  type       TaskType // Task type (break or work)
+
+  // Relation back to Schedule
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
 }
 
-model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
+// Enum for Task type
+enum TaskType {
+  break
+  work
 }
