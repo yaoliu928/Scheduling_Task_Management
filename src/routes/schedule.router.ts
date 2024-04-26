@@ -12,7 +12,7 @@ const scheduleRouter = Router();
 scheduleRouter.get('/', getAllSchedules);
 scheduleRouter.post('/', addSchedule);
 scheduleRouter.get('/:id', getScheduleById);
-scheduleRouter.delete('/:id', deleteScheduleById);
 scheduleRouter.put('/:id', updateScheduleById);
+scheduleRouter.delete('/:id', deleteScheduleById);
 
 export { scheduleRouter };

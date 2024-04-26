@@ -1,38 +1,12 @@
-import { $Enums, TaskType } from '@prisma/client';
+import { Request, Response } from 'express';
 import { prisma } from '../utils/prismaClient';
 
-const getAllTasks = async (
-  req: unknown,
-  res: {
-    json: (
-      arg0: {
-        id: string;
-        accountId: number;
-        scheduleId: string;
-        startTime: Date;
-        duration: number;
-        type: $Enums.TaskType;
-      }[],
-    ) => void;
-  },
-) => {
+const getAllTasks = async (req: Request, res: Response) => {
   const tasks = await prisma.task.findMany();
-  res.json(tasks);
+  res.formatResponse(tasks);
 };
 
-const addTask = async (
-  req: { body: { accountId: number; scheduleId: string; startTime: Date; duration: number; type: TaskType } },
-  res: {
-    json: (arg0: {
-      id: string;
-      accountId: number;
-      scheduleId: string;
-      startTime: Date;
-      duration: number;
-      type: $Enums.TaskType;
-    }) => void;
-  },
-) => {
+const addTask = async (req: Request, res: Response) => {
   const { accountId, scheduleId, startTime, duration, type } = req.body;
   const task = await prisma.task.create({
     data: {
@@ -43,70 +17,19 @@ const addTask = async (
       type,
     },
   });
-  res.json(task);
+  res.formatResponse(task, 201);
 };
 
-const getTaskById = async (
-  req: { params: { id: string } },
-  res: {
-    json: (
-      arg0: {
-        id: string;
-        accountId: number;
-        scheduleId: string;
-        startTime: Date;
-        duration: number;
-        type: $Enums.TaskType;
-      } | null,
-    ) => void;
-  },
-) => {
+const getTaskById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const tasks = await prisma.task.findUnique({
+  const task = await prisma.task.findUnique({
     where: { id },
   });
-  res.json(tasks);
+  res.formatResponse(task);
 };
 
-const deleteTaskById = async (
-  req: { params: { id: string } },
-  res: {
-    json: (arg0: {
-      id: string;
-      accountId: number;
-      scheduleId: string;
-      startTime: Date;
-      duration: number;
-      type: $Enums.TaskType;
-    }) => void;
-  },
-) => {
-  const { id } = req.params;
-  const task = await prisma.task.delete({
-    where: {
-      id,
-    },
-  });
-  res.json(task);
-};
-
-const updateTaskById = async (
-  req: {
-    params: { id: string };
-    body: { accountId: number; scheduleId: string; startTime: Date; duration: number; type: TaskType };
-  },
-  res: {
-    json: (arg0: {
-      id: string;
-      accountId: number;
-      scheduleId: string;
-      startTime: Date;
-      duration: number;
-      type: $Enums.TaskType;
-    }) => void;
-  },
-) => {
+const updateTaskById = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { accountId, scheduleId, startTime, duration, type } = req.body;
 
@@ -120,7 +43,20 @@ const updateTaskById = async (
       type,
     },
   });
-  res.json(task);
+  res.formatResponse(task);
+};
+
+const deleteTaskById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const task = await prisma.task.delete({
+    where: {
+      id,
+    },
+  });
+  if (!task) {
+    throw new Error(`task not found: ${id}`);
+  }
+  res.formatResponse('', 204);
 };
 
 export { addTask, getAllTasks, getTaskById, deleteTaskById, updateTaskById };

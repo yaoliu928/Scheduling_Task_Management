@@ -1,17 +1,12 @@
+import { Request, Response } from 'express';
 import { prisma } from '../utils/prismaClient';
 
-const getAllSchedules = async (
-  req: unknown,
-  res: { json: (arg0: { id: string; accountId: number; agentId: number; startTime: Date; endTime: Date }[]) => void },
-) => {
+const getAllSchedules = async (_req: Request, res: Response) => {
   const schedules = await prisma.schedule.findMany();
-  res.json(schedules);
+  res.formatResponse(schedules);
 };
 
-const addSchedule = async (
-  req: { body: { accountId: number; agentId: number; startTime: Date; endTime: Date } },
-  res: { json: (arg0: { id: string; accountId: number; agentId: number; startTime: Date; endTime: Date }) => void },
-) => {
+const addSchedule = async (req: Request, res: Response) => {
   const { accountId, agentId, startTime, endTime } = req.body;
   const schedule = await prisma.schedule.create({
     data: {
@@ -21,40 +16,19 @@ const addSchedule = async (
       endTime,
     },
   });
-  res.json(schedule);
+  res.formatResponse(schedule, 201);
 };
 
-const getScheduleById = async (
-  req: { params: { id: string | undefined } },
-  res: {
-    json: (arg0: { id: string; accountId: number; agentId: number; startTime: Date; endTime: Date } | null) => void;
-  },
-) => {
+const getScheduleById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const schedules = await prisma.schedule.findUnique({
+  const schedule = await prisma.schedule.findUnique({
     where: { id },
   });
-  res.json(schedules);
+  res.formatResponse(schedule);
 };
 
-const deleteScheduleById = async (
-  req: { params: { id: string | undefined } },
-  res: { json: (arg0: { id: string; accountId: number; agentId: number; startTime: Date; endTime: Date }) => void },
-) => {
-  const { id } = req.params;
-  const schedule = await prisma.schedule.delete({
-    where: {
-      id,
-    },
-  });
-  res.json(schedule);
-};
-
-const updateScheduleById = async (
-  req: { params: { id: string }; body: { accountId: number; agentId: number; startTime: Date; endTime: Date } },
-  res: { json: (arg0: { id: string; accountId: number; agentId: number; startTime: Date; endTime: Date }) => void },
-) => {
+const updateScheduleById = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { accountId, agentId, startTime, endTime } = req.body;
 
@@ -67,7 +41,29 @@ const updateScheduleById = async (
       endTime,
     },
   });
-  res.json(schedule);
+  res.formatResponse(schedule);
+};
+
+const deleteScheduleById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const tasks = await prisma.task.findMany({
+    where: { scheduleId: id },
+  });
+
+  if (tasks.length > 0) {
+    throw new Error('Cannot delete user because they have posts.');
+  }
+
+  const schedule = await prisma.schedule.delete({
+    where: {
+      id,
+    },
+  });
+  if (!schedule) {
+    throw new Error(`Schedule not found: ${id}`);
+  }
+  res.formatResponse('', 204);
 };
 
 export { addSchedule, getAllSchedules, getScheduleById, deleteScheduleById, updateScheduleById };
