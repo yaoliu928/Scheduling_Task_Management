@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
-const formatResponse = (_req: Request, res: Response, next: () => void) => {
+const formatResponseMiddleware = (_req: Request, res: Response, next: NextFunction) => {
   res.formatResponse = (data: unknown, statusCode = 200, customObject = {}) => {
     const dataKey = statusCode < 400 ? 'data' : 'error';
 
@@ -15,4 +15,4 @@ const formatResponse = (_req: Request, res: Response, next: () => void) => {
   next();
 };
 
-export { formatResponse };
+export { formatResponseMiddleware };
