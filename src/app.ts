@@ -7,7 +7,7 @@ import { pathNotFoundMiddleware } from './middleware/pathNotFound.middleware';
 import { validationErrorMiddleware } from './middleware/errorMiddleware/validationError.middleware';
 import { unknownErrorMiddleware } from './middleware/errorMiddleware/unknownError.middleware';
 import { notFoundErrorMiddleware } from './middleware/errorMiddleware/notFoundError.middleware';
-// import { morganConfig } from './common/morgan';
+import { morganLog } from './common/morgan';
 
 const app: Express = express();
 
@@ -18,7 +18,7 @@ app.use(express.json());
 
 app.use(formatResponseMiddleware);
 
-// app.use(morganConfig);
+app.use(morganLog);
 
 app.use('/v1', v1Router);
 

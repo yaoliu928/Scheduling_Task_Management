@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../common/utils/prismaClient';
 import { NotFoundException } from '../common/exceptions/notFound.exception';
 import { getLogger } from '../common/logger';
+import { addScheduleSchema, updateScheduleSchema } from '../validations/schedule.schema';
 
 const logger = getLogger(__filename);
 const getAllSchedules = async (_req: Request, res: Response, next: NextFunction) => {
@@ -18,14 +19,12 @@ const getAllSchedules = async (_req: Request, res: Response, next: NextFunction)
 
 const addSchedule = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { accountId, agentId, startTime, endTime } = req.body;
+    const validBody = await addScheduleSchema.validateAsync(req.body, {
+      allowUnknown: true,
+      stripUnknown: true,
+    });
     const schedule = await prisma.schedule.create({
-      data: {
-        accountId,
-        agentId,
-        startTime,
-        endTime,
-      },
+      data: validBody,
     });
     res.formatResponse(schedule, 201);
   } catch (e) {
@@ -57,21 +56,19 @@ const getScheduleById = async (req: Request, res: Response, next: NextFunction) 
 const updateScheduleById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { accountId, agentId, startTime, endTime } = req.body;
     const schedule = await prisma.schedule.findUnique({
       where: { id },
     });
     if (!schedule) {
       throw new NotFoundException(`Schedule not found: ${id}`);
     }
+    const validBody = await updateScheduleSchema.validateAsync(req.body, {
+      allowUnknown: true,
+      stripUnknown: true,
+    });
     const newSchedule = await prisma.schedule.update({
       where: { id },
-      data: {
-        accountId,
-        agentId,
-        startTime,
-        endTime,
-      },
+      data: validBody,
     });
     res.formatResponse(newSchedule);
   } catch (e) {

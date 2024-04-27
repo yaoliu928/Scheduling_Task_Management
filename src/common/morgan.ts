@@ -5,7 +5,7 @@ import { getLogger } from './logger';
 const env = optionalConfig.NODE_ENV;
 const logger = getLogger();
 
-const morganConfig = morgan(env === 'dev' ? 'dev' : 'combined', {
+const morganLog = morgan(env === 'dev' ? 'dev' : 'combined', {
   stream: {
     write: (message) => {
       logger.info(message);
@@ -13,4 +13,4 @@ const morganConfig = morgan(env === 'dev' ? 'dev' : 'combined', {
   },
 });
 
-export { morganConfig };
+export { morganLog };
