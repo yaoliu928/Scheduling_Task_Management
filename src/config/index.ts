@@ -19,7 +19,4 @@ for (const key in requiredConfig) {
   }
 }
 
-module.exports = {
-  ...optionalConfig,
-  ...requiredConfig,
-};
+export { optionalConfig, requiredConfig };

@@ -1,13 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../common/utils/prismaClient';
 import { NotFoundException } from '../common/exceptions/notFound.exception';
+import { getLogger } from '../common/logger';
 
+const logger = getLogger(__filename);
 const getAllTasks = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const tasks = await prisma.task.findMany();
     res.formatResponse(tasks);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
@@ -26,7 +30,9 @@ const addTask = async (req: Request, res: Response, next: NextFunction) => {
     });
     res.formatResponse(task, 201);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
@@ -42,7 +48,9 @@ const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
     }
     res.formatResponse(task);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
@@ -70,7 +78,9 @@ const updateTaskById = async (req: Request, res: Response, next: NextFunction) =
     });
     res.formatResponse(newTask);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
@@ -92,7 +102,9 @@ const deleteTaskById = async (req: Request, res: Response, next: NextFunction) =
     });
     res.formatResponse('', 204);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };

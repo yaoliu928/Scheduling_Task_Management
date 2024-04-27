@@ -1,5 +1,4 @@
 import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cors from 'cors';
 import { v1Router } from './routes';
@@ -8,6 +7,8 @@ import { pathNotFoundMiddleware } from './middleware/pathNotFound.middleware';
 import { validationErrorMiddleware } from './middleware/errorMiddleware/validationError.middleware';
 import { unknownErrorMiddleware } from './middleware/errorMiddleware/unknownError.middleware';
 import { notFoundErrorMiddleware } from './middleware/errorMiddleware/notFoundError.middleware';
+import { optionalConfig } from './config';
+import { getLogger } from './common/logger';
 
 const app: Express = express();
 
@@ -30,9 +31,9 @@ app.get('/', (_req: Request, res: Response) => {
   res.send('My Server');
 });
 
-dotenv.config();
-const port = process.env.PORT || 3000;
+const port = optionalConfig.PORT;
+const logger = getLogger(__filename);
 
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  logger.info(`[server]: Server is running at http://localhost:${port}`);
 });

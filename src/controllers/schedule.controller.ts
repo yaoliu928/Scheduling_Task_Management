@@ -1,13 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../common/utils/prismaClient';
 import { NotFoundException } from '../common/exceptions/notFound.exception';
+import { getLogger } from '../common/logger';
 
+const logger = getLogger(__filename);
 const getAllSchedules = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const schedules = await prisma.schedule.findMany();
     res.formatResponse(schedules);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
@@ -25,7 +29,9 @@ const addSchedule = async (req: Request, res: Response, next: NextFunction) => {
     });
     res.formatResponse(schedule, 201);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
@@ -41,7 +47,9 @@ const getScheduleById = async (req: Request, res: Response, next: NextFunction) 
     }
     res.formatResponse(schedule);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
@@ -67,7 +75,9 @@ const updateScheduleById = async (req: Request, res: Response, next: NextFunctio
     });
     res.formatResponse(newSchedule);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
@@ -95,7 +105,9 @@ const deleteScheduleById = async (req: Request, res: Response, next: NextFunctio
 
     res.formatResponse('', 204);
   } catch (e) {
-    // logger.info(e.message);
+    if (e instanceof Error) {
+      logger.info(e.message);
+    }
     next(e);
   }
 };
