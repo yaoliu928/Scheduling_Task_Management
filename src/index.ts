@@ -17,13 +17,16 @@ app.use(cors());
 app.use(express.json());
 
 app.use(formatResponseMiddleware);
+
 app.use('/v1', v1Router);
+
 app.use(pathNotFoundMiddleware);
+
 app.use(validationErrorMiddleware);
 app.use(notFoundErrorMiddleware);
 app.use(unknownErrorMiddleware);
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.send('My Server');
 });
 

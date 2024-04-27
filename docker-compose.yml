@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: express_container
     environment:
+      PORT: 3001
       DATABASE_URL: 'postgresql://postgres:password123@postgres:5432/leonardoAI?schema=public'
     ports:
       - '3001:3001'
