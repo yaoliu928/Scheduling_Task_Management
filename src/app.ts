@@ -8,6 +8,7 @@ import { validationErrorMiddleware } from './middleware/errorMiddleware/validati
 import { unknownErrorMiddleware } from './middleware/errorMiddleware/unknownError.middleware';
 import { notFoundErrorMiddleware } from './middleware/errorMiddleware/notFoundError.middleware';
 import { morganLog } from './common/morgan';
+import { TimeExcessErrorMiddleware } from './middleware/errorMiddleware/timeExcessError.middleware';
 
 const app: Express = express();
 
@@ -25,6 +26,7 @@ app.use('/v1', v1Router);
 app.use(pathNotFoundMiddleware);
 
 app.use(validationErrorMiddleware);
+app.use(TimeExcessErrorMiddleware);
 app.use(notFoundErrorMiddleware);
 app.use(unknownErrorMiddleware);
 

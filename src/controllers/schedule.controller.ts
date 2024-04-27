@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../common/utils/prismaClient';
 import { NotFoundException } from '../common/exceptions/notFound.exception';
 import { getLogger } from '../common/logger';
-import { addScheduleSchema, updateScheduleSchema } from '../validations/schedule.schema';
+import { scheduleSchema } from '../validations/schedule.schema';
 
 const logger = getLogger(__filename);
 const getAllSchedules = async (_req: Request, res: Response, next: NextFunction) => {
@@ -19,7 +19,7 @@ const getAllSchedules = async (_req: Request, res: Response, next: NextFunction)
 
 const addSchedule = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const validBody = await addScheduleSchema.validateAsync(req.body, {
+    const validBody = await scheduleSchema.validateAsync(req.body, {
       allowUnknown: true,
       stripUnknown: true,
     });
@@ -62,7 +62,7 @@ const updateScheduleById = async (req: Request, res: Response, next: NextFunctio
     if (!schedule) {
       throw new NotFoundException(`Schedule not found: ${id}`);
     }
-    const validBody = await updateScheduleSchema.validateAsync(req.body, {
+    const validBody = await scheduleSchema.validateAsync(req.body, {
       allowUnknown: true,
       stripUnknown: true,
     });
